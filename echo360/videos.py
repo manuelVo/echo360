@@ -59,6 +59,8 @@ class EchoVideo(object):
                           self._driver.page_source)
 
             m3u8_url = self._loop_find_m3u8_url(video_url, waitsecond=30)
+            m3u8_url = m3u8_url[:m3u8_url.find("mp4:")] + "audio-video.flv"
+            m3u8_url = m3u8_url.replace("http://", "rtmp://")
             self._url = m3u8_url
 
             date = dateutil.parser.parse(video_json["startTime"]).date()

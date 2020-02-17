@@ -14,6 +14,8 @@ import selenium.common.exceptions as seleniumException
 import warnings  # hide the warnings of phantomjs being deprecated
 warnings.filterwarnings("ignore", category=UserWarning, module='selenium')
 
+import subprocess
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -196,7 +198,11 @@ class EchoDownloader(object):
 
         downloaded_videos = []
         for filename, video in videos_to_be_download:
-            self._download_as(video.url, filename)
+            playpath = video.url.split("_definst_/")[1]
+            video.dlprocess = subprocess.Popen(["rtmpdump", "-R", "-r", video.url, "-y", playpath, "-o", "default_out_path/" + filename + ".flv"])
+
+        for filename, video in videos_to_be_downloaded:
+            video.dlprocess.wait()
             downloaded_videos.insert(0, filename)
         print(self.success_msg(self._course.course_name, downloaded_videos))
         self._driver.close()
